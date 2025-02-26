@@ -35,7 +35,7 @@ export async function fetchLatestInvoices() {
     // Artificially delay a response for demo purposes.
     // Don't do this in production :)
 
-    console.log('Fetching revenue data...');
+    console.log('Fetching latest invoices data...');
     await new Promise((resolve) => setTimeout(resolve, 4000));
 
     const data = await sql<LatestInvoiceRaw[]>`
@@ -45,7 +45,7 @@ export async function fetchLatestInvoices() {
       ORDER BY invoices.date DESC
       LIMIT 5`;
     
-    console.log('Data fetch completed after 3 seconds.');
+    console.log('Data fetch completed after 4 seconds.');
 
     const latestInvoices = data.map((invoice) => ({
       ...invoice,
@@ -63,7 +63,7 @@ export async function fetchCardData() {
     // Artificially delay a response for demo purposes.
     // Don't do this in production :)
 
-    console.log('Fetching revenue data...');
+    console.log('Fetching card data...');
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
     // You can probably combine these into a single SQL query
@@ -76,7 +76,7 @@ export async function fetchCardData() {
          SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
          FROM invoices`;
     
-    console.log('Data fetch completed after 3 seconds.');
+    console.log('Data fetch completed after 2 seconds.');
 
     const data = await Promise.all([
       invoiceCountPromise,
@@ -109,6 +109,12 @@ export async function fetchFilteredInvoices(
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
+    // Artificially delay a response for demo purposes.
+    // Don't do this in production :)
+
+    console.log('Fetching filtered invoices data...');
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
     const invoices = await sql<InvoicesTable[]>`
       SELECT
         invoices.id,
@@ -129,6 +135,8 @@ export async function fetchFilteredInvoices(
       ORDER BY invoices.date DESC
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;
+    
+    console.log('Data fetch completed after 3 seconds.');
 
     return invoices;
   } catch (error) {
