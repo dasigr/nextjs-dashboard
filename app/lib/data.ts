@@ -1,3 +1,4 @@
+import axios from 'axios';
 import postgres from 'postgres';
 import {
   CustomerField,
@@ -206,5 +207,26 @@ export async function fetchFilteredCustomers(query: string) {
   } catch (err) {
     console.error('Database Error:', err);
     throw new Error('Failed to fetch customer table.');
+  }
+}
+
+export async function fetchArticles() {
+  const access_token = process.env.ACCESS_TOKEN;
+
+  try {
+    const url = `${process.env.DRUPAL_API_URL}/jsonapi/node/article`
+
+    const response = await axios.get(url, {
+      headers: {
+        'Accept': 'application/vnd.api+json',
+        'Authorization': 'Bearer ' + access_token
+      }
+    })
+
+    const content = response.data
+    return content.data
+  } catch (err) {
+    console.error('Database Error:', err.message);
+    // throw new Error('Failed to fetch all articles.');
   }
 }

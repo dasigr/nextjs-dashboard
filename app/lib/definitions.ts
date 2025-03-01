@@ -86,3 +86,29 @@ export type InvoiceForm = {
   amount: number;
   status: 'pending' | 'paid';
 };
+
+export type Article = {
+  id: string;
+  type: string,
+  drupal_internal__nid: number,
+  drupal_internal__vid: number,
+  attributes: {
+    title: string,
+    body: {
+      format: string,
+      processed: string,
+      summary: string,
+      value: string,
+    },
+    changed: string,
+    created: string,
+    langcode: string,
+    promote: boolean,
+    sticky: boolean,
+    status: boolean,
+    path: {
+      alias: string,
+      langcode: string,
+    },
+  };
+};
