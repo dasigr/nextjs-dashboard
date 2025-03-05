@@ -10,6 +10,9 @@ export default async function Page() {
   const customers = await fetchCustomers();
 
   return (
-    <Table customers={customers} />
+    <>
+      {/* <Table customers={customers} /> */}
+      <p>-- content here --</p>
+    </>
   );
 }
