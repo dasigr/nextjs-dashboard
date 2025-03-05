@@ -226,7 +226,7 @@ export async function fetchArticles() {
     const content = response.data
     return content.data
   } catch (err) {
-    console.error('Database Error:', err.message);
+    console.error('Database Error:', err);
     // throw new Error('Failed to fetch all articles.');
   }
 }
