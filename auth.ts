@@ -1,6 +1,7 @@
 import NextAuth from 'next-auth';
 import { authConfig } from './auth.config';
 import Credentials from 'next-auth/providers/credentials';
+import GitHub from 'next-auth/providers/github';
 import { z } from 'zod';
 import type { User, Token } from '@/app/lib/definitions';
 import axios from 'axios';
@@ -66,7 +67,7 @@ async function getUser(user_id: string, token: Token) {
   }
 }
 
-export const { auth, signIn, signOut } = NextAuth({
+export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   providers: [
     Credentials({
@@ -99,5 +100,6 @@ export const { auth, signIn, signOut } = NextAuth({
         return null;
       },
     }),
+    GitHub,
   ],
 });

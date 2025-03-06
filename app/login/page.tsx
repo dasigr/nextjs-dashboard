@@ -1,7 +1,9 @@
+import { lusitana } from '@/app/ui/fonts';
 import AcmeLogo from '@/app/ui/acme-logo';
 import LoginForm from '@/app/ui/login-form';
 import { Suspense } from 'react';
 import { Metadata } from 'next';
+import SignIn from '@/app/ui/components/sign-in';
 
 export const metadata: Metadata = {
   title: 'User Login',
@@ -17,7 +19,14 @@ export default function LoginPage() {
           </div>
         </div>
         <Suspense>
-          <LoginForm />
+          <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
+            <h1 className={`${lusitana.className} mb-3 text-2xl`}>
+              Please log in to continue.
+            </h1>
+            <LoginForm />
+            <p className="text-sm text-center">or</p>
+            <SignIn />
+          </div>
         </Suspense>
       </div>
     </main>
