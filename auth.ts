@@ -5,20 +5,20 @@ import GitHub from 'next-auth/providers/github';
 import { z } from 'zod';
 import type { User, Token } from '@/app/lib/definitions';
 // import bcrypt from 'bcrypt';
-import postgres from 'postgres';
+// import postgres from 'postgres';
 import axios from 'axios';
 
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+// const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
  
-async function getUser(email: string): Promise<User | undefined> {
-  try {
-    const user = await sql<User[]>`SELECT * FROM users WHERE email=${email}`;
-    return user[0];
-  } catch (error) {
-    console.error('Failed to fetch user:', error);
-    throw new Error('Failed to fetch user.');
-  }
-}
+// async function getUser(email: string): Promise<User | undefined> {
+//   try {
+//     const user = await sql<User[]>`SELECT * FROM users WHERE email=${email}`;
+//     return user[0];
+//   } catch (error) {
+//     console.error('Failed to fetch user:', error);
+//     throw new Error('Failed to fetch user.');
+//   }
+// }
 
 async function getToken(name: string, password: string) {
   try {
@@ -92,7 +92,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (parsedCredentials.success) {
           const { email, password } = parsedCredentials.data;
-          const user = await getUser(email);
+          // const user = await getUser(email);
+          const user = {id: '123456'};
           if (!user) return null;
           // const passwordsMatch = await bcrypt.compare(password, user.password);
           const passwordsMatch = true;
