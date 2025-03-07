@@ -4,8 +4,8 @@ import Credentials from 'next-auth/providers/credentials';
 import GitHub from 'next-auth/providers/github';
 import { z } from 'zod';
 import type { User, Token } from '@/app/lib/definitions';
-// import bcrypt from 'bcrypt';
-// import postgres from 'postgres';
+import bcrypt from 'bcrypt';
+import postgres from 'postgres';
 import axios from 'axios';
 
 // const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
@@ -92,13 +92,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (parsedCredentials.success) {
           const { email, password } = parsedCredentials.data;
-          // const user = await getUser(email);
-          const user = {id: '123456'};
+          // Get token.
+          const token = await getToken(email, password);
+          // console.log('Token', token);
+  
+          // Get User ID.
+          const user_id = await getUserId(token);
+          // console.log('User ID', user_id);
+
+          // Get User.
+          const user = await getUserById(user_id, token);
+          // console.log('User', user);
+
           if (!user) return null;
-          // const passwordsMatch = await bcrypt.compare(password, user.password);
-          const passwordsMatch = true;
- 
-          if (passwordsMatch) return user;
+          const emailMatch = user.data.attributes.mail === email;
+
+          if (emailMatch) return user;
         }
   
         console.log('Invalid credentials');
