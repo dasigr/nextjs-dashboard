@@ -4,7 +4,21 @@ import Credentials from 'next-auth/providers/credentials';
 import GitHub from 'next-auth/providers/github';
 import { z } from 'zod';
 import type { User, Token } from '@/app/lib/definitions';
+import bcrypt from 'bcrypt';
+import postgres from 'postgres';
 import axios from 'axios';
+
+const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+ 
+async function getUser(email: string): Promise<User | undefined> {
+  try {
+    const user = await sql<User[]>`SELECT * FROM users WHERE email=${email}`;
+    return user[0];
+  } catch (error) {
+    console.error('Failed to fetch user:', error);
+    throw new Error('Failed to fetch user.');
+  }
+}
 
 async function getToken(name: string, password: string) {
   try {
@@ -48,7 +62,7 @@ async function getUserId(token: Token) {
   }
 }
 
-async function getUser(user_id: string, token: Token) {
+async function getUserById(user_id: string, token: Token) {
   try {
     const url = `${process.env.DRUPAL_API_URL}/jsonapi/user/user/${user_id}`;
 
@@ -75,25 +89,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const parsedCredentials = z
           .object({ email: z.string().email(), password: z.string().min(6) })
           .safeParse(credentials);
-        
+
         if (parsedCredentials.success) {
           const { email, password } = parsedCredentials.data;
-          // Get token.
-          const token = await getToken(email, password);
-          // console.log('Token', token);
-  
-          // Get User ID.
-          const user_id = await getUserId(token);
-          // console.log('User ID', user_id);
-
-          // Get User.
-          const user = await getUser(user_id, token);
-          // console.log('User', user);
-
+          const user = await getUser(email);
           if (!user) return null;
-          const emailMatch = user.data.attributes.mail === email;
-
-          if (emailMatch) return user;
+          const passwordsMatch = await bcrypt.compare(password, user.password);
+ 
+          if (passwordsMatch) return user;
         }
   
         console.log('Invalid credentials');
